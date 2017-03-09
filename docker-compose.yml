@@ -1,0 +1,25 @@
+version: "2"
+services:
+  web:
+    image: mk/foo
+    container_name: foo-service
+    depends_on:
+      - db
+      - eureka
+#    net: microservicesnet
+    ports:
+      - 80:8080
+
+  db:
+    image: mysql/mysql-server
+    container_name: dev-mysql
+    environment:
+     - MYSQL_ROOT_PASSWORD=alabama
+#    net: microservicesnet
+
+  eureka:
+    image: springcloud/eureka
+    container_name: dev-eureka
+#    net: microservicesnet
+    ports:
+      - 8761:8761
