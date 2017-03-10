@@ -1,25 +1,53 @@
-version: "2"
+version: "2.0"
+
 services:
-  web:
-    image: mk/foo
-    container_name: foo-service
-    depends_on:
-      - db
-      - eureka
-#    net: microservicesnet
-    ports:
-      - 80:8080
-
-  db:
-    image: mysql/mysql-server
-    container_name: dev-mysql
-    environment:
-     - MYSQL_ROOT_PASSWORD=alabama
-#    net: microservicesnet
-
   eureka:
     image: springcloud/eureka
     container_name: dev-eureka
-#    net: microservicesnet
     ports:
       - 8761:8761
+
+  customer-service:
+    build:
+      context: ./customer-service
+#    image: mk/customer-service
+    container_name: customer-service
+    depends_on:
+      - customer-service-db
+      - eureka
+    ports:
+      - 8081:8080
+  customer-service-db:
+    image: mysql/mysql-server
+    container_name: dev-customer-db
+    environment:
+     - MYSQL_ROOT_PASSWORD=alabama
+
+  order-service:
+    build:
+      context: ./order-service
+#    image: mk/order-service
+    container_name: order-service
+    depends_on:
+      - order-service-db
+      - eureka
+    ports:
+      - 8082:8080
+  order-service-db:
+    image: mysql/mysql-server
+    container_name: dev-order-db
+    environment:
+     - MYSQL_ROOT_PASSWORD=alabama
+
+  web:
+    build:
+      context: ./store-web
+#    image: mk/foo
+    container_name: store-web
+    depends_on:
+      - eureka
+      - order-service
+      - customer-service
+    ports:
+      - 80:8080
+
